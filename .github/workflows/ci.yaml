@@ -80,7 +80,7 @@ jobs:
         shell: bash
 
       - name: Set Asset Name
-        run: echo "ASSET_NAME=fastly-exporter-${{ env.APP_VERSION }}.$(go env GOOS)-$(go env GOARCH).tar.gz" >> $GITHUB_ENV
+        run: echo "ASSET_NAME=fastly-historical-stats-exporter-${{ env.APP_VERSION }}.$(go env GOOS)-$(go env GOARCH).tar.gz" >> $GITHUB_ENV
         shell: bash
 
       - name: Set Asset Path
