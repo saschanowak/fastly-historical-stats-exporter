@@ -1,0 +1,17 @@
+fastly
+*.tar.gz
+
+/dist/
+/fastly-historical-stats-exporter
+*.tar.gz
+*.test
+/vendor
+
+.env
+
+# Build outputs
+/bin/
+/out/
+*.exe
+*.cover
+*.out
