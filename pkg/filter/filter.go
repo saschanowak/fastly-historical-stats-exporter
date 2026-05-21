@@ -1,3 +1,4 @@
+// Package filter provides regex-based allow/block filtering for metric names.
 package filter
 
 import (

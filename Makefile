@@ -1,7 +1,7 @@
 GO           ?= go
 GOOS         ?= $(shell ${GO} env GOOS)
 GOARCH       ?= $(shell ${GO} env GOARCH)
-VERSION      ?= $(shell git describe --tags --abbrev=0 | sed -e 's/^v//')
+VERSION      := $(or $(shell git describe --tags --abbrev=0 2>/dev/null | sed -e 's/^v//'),dev)
 BRANCH       ?= $(shell git rev-parse --abbrev-ref HEAD)
 STATICCHECK  ?= $(shell $(GO) env GOPATH)/bin/staticcheck
 REVIVE       ?= $(shell $(GO) env GOPATH)/bin/revive

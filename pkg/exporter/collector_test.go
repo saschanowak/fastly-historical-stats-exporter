@@ -75,7 +75,8 @@ func TestDescribeEmitsDescriptors(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	c := exporter.NewCollector(ctx,
+	c := exporter.NewCollector(
+		ctx,
 		api.NewClient("tok", api.WithBaseURL(srv.URL)),
 		&filter.Filter{},
 		"fastly",
@@ -96,7 +97,8 @@ func TestDescribeIncludesSelfMetrics(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	c := exporter.NewCollector(ctx,
+	c := exporter.NewCollector(
+		ctx,
 		api.NewClient("tok", api.WithBaseURL(srv.URL)),
 		&filter.Filter{},
 		"fastly",
@@ -131,7 +133,8 @@ func TestDescribeRespectsAllowlistFilter(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	c := exporter.NewCollector(ctx,
+	c := exporter.NewCollector(
+		ctx,
 		api.NewClient("tok", api.WithBaseURL(srv.URL)),
 		f,
 		"fastly",
@@ -168,14 +171,15 @@ func TestDescribeRespectsBlocklistFilter(t *testing.T) {
 	ctxFull, cancelFull := context.WithCancel(context.Background())
 	defer cancelFull()
 
-	full := exporter.NewCollector(ctxFull,
+	full := exporter.NewCollector(
+		ctxFull,
 		api.NewClient("tok", api.WithBaseURL(srv.URL)),
 		noFilter,
 		"fastly",
 		time.Hour, time.Hour, nil,
 		discardLogger(),
 	)
-	filtered := c_for(t, srv.URL, f)
+	filtered := cFor(t, srv.URL, f)
 	defer filtered.Cancel()
 
 	fullCount := statsDescCount(t, full)
@@ -199,7 +203,8 @@ func TestCollectEmitsMetricsForKnownService(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	c := exporter.NewCollector(ctx,
+	c := exporter.NewCollector(
+		ctx,
 		api.NewClient("tok", api.WithBaseURL(srv.URL)),
 		&filter.Filter{},
 		"fastly",
@@ -232,7 +237,8 @@ func TestCollectEmitsNoStatsMetricsWithNoServices(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	c := exporter.NewCollector(ctx,
+	c := exporter.NewCollector(
+		ctx,
 		api.NewClient("tok", api.WithBaseURL(srv.URL)),
 		&filter.Filter{},
 		"fastly",
@@ -261,7 +267,8 @@ func TestCollectWithNamespacePrefix(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	c := exporter.NewCollector(ctx,
+	c := exporter.NewCollector(
+		ctx,
 		api.NewClient("tok", api.WithBaseURL(srv.URL)),
 		&filter.Filter{},
 		"myns",
@@ -300,7 +307,8 @@ func TestExplicitServiceIDsSkipsDiscovery(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	exporter.NewCollector(ctx,
+	exporter.NewCollector(
+		ctx,
 		api.NewClient("tok", api.WithBaseURL(srv.URL)),
 		&filter.Filter{},
 		"fastly",
@@ -331,7 +339,8 @@ func TestExplicitServiceIDsAppearInMetrics(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	c := exporter.NewCollector(ctx,
+	c := exporter.NewCollector(
+		ctx,
 		api.NewClient("tok", api.WithBaseURL(srv.URL)),
 		&filter.Filter{},
 		"fastly",
@@ -363,10 +372,11 @@ type collectorWithCancel struct {
 	Cancel context.CancelFunc
 }
 
-func c_for(t *testing.T, baseURL string, f *filter.Filter) collectorWithCancel {
+func cFor(t *testing.T, baseURL string, f *filter.Filter) collectorWithCancel {
 	t.Helper()
 	ctx, cancel := context.WithCancel(context.Background())
-	c := exporter.NewCollector(ctx,
+	c := exporter.NewCollector(
+		ctx,
 		api.NewClient("tok", api.WithBaseURL(baseURL)),
 		f,
 		"fastly",

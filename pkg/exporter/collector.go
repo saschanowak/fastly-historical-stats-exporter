@@ -1,3 +1,4 @@
+// Package exporter implements a Prometheus collector for Fastly historical stats.
 package exporter
 
 import (

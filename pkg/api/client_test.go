@@ -16,10 +16,10 @@ func newTestClient(baseURL string) *api.Client {
 	return api.NewClient("test-token", api.WithBaseURL(baseURL))
 }
 
-// ---------- APIError ----------
+// ---------- Error ----------
 
 func TestAPIErrorWithMessage(t *testing.T) {
-	err := &api.APIError{Code: 403, Msg: "forbidden"}
+	err := &api.Error{Code: 403, Msg: "forbidden"}
 	want := "fastly API responded with 403: forbidden"
 	if got := err.Error(); got != want {
 		t.Errorf("Error() = %q, want %q", got, want)
@@ -27,7 +27,7 @@ func TestAPIErrorWithMessage(t *testing.T) {
 }
 
 func TestAPIErrorWithoutMessage(t *testing.T) {
-	err := &api.APIError{Code: 500}
+	err := &api.Error{Code: 500}
 	want := "fastly API responded with 500"
 	if got := err.Error(); got != want {
 		t.Errorf("Error() = %q, want %q", got, want)
@@ -94,7 +94,7 @@ func TestListServicesFollowsPagination(t *testing.T) {
 
 func TestListServicesStopsOnNonProgressingNextPage(t *testing.T) {
 	calls := 0
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		calls++
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("X-Next-Page", "1") // same page — must not loop
@@ -112,7 +112,7 @@ func TestListServicesStopsOnNonProgressingNextPage(t *testing.T) {
 }
 
 func TestListServicesAPIError(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusForbidden)
 		json.NewEncoder(w).Encode(map[string]string{"msg": "invalid token"})
@@ -123,9 +123,9 @@ func TestListServicesAPIError(t *testing.T) {
 	if err == nil {
 		t.Fatal("ListServices() expected error, got nil")
 	}
-	apiErr, ok := err.(*api.APIError)
+	apiErr, ok := err.(*api.Error)
 	if !ok {
-		t.Fatalf("expected *api.APIError, got %T: %v", err, err)
+		t.Fatalf("expected *api.Error, got %T: %v", err, err)
 	}
 	if apiErr.Code != http.StatusForbidden {
 		t.Errorf("Code = %d, want %d", apiErr.Code, http.StatusForbidden)
@@ -136,7 +136,7 @@ func TestListServicesAPIError(t *testing.T) {
 }
 
 func TestListServicesInvalidJSON(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte("not json"))
 	}))
 	defer srv.Close()
@@ -148,7 +148,7 @@ func TestListServicesInvalidJSON(t *testing.T) {
 }
 
 func TestListServicesContextCancellation(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
 		// hang until the client gives up
 		<-r.Context().Done()
 	}))
@@ -223,7 +223,7 @@ func TestGetStatsIncludesTimeRangeInURL(t *testing.T) {
 }
 
 func TestGetStatsAPIError(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"msg": "unauthorized"})
@@ -234,9 +234,9 @@ func TestGetStatsAPIError(t *testing.T) {
 	if err == nil {
 		t.Fatal("GetStats() expected error, got nil")
 	}
-	apiErr, ok := err.(*api.APIError)
+	apiErr, ok := err.(*api.Error)
 	if !ok {
-		t.Fatalf("expected *api.APIError, got %T: %v", err, err)
+		t.Fatalf("expected *api.Error, got %T: %v", err, err)
 	}
 	if apiErr.Code != http.StatusUnauthorized {
 		t.Errorf("Code = %d, want %d", apiErr.Code, http.StatusUnauthorized)
@@ -244,7 +244,7 @@ func TestGetStatsAPIError(t *testing.T) {
 }
 
 func TestGetStatsInvalidJSON(t *testing.T) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte("not json"))
 	}))
 	defer srv.Close()

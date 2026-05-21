@@ -1,3 +1,4 @@
+// Package main is the entry point for the Fastly historical stats Prometheus exporter.
 package main
 
 import (
@@ -141,7 +142,8 @@ func main() {
 	}
 
 	go func() {
-		logger.Info("starting exporter",
+		logger.Info(
+			"starting exporter",
 			"version", programVersion,
 			"listen", listenAddr,
 			"scrape_interval", scrapeInterval,

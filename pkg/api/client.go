@@ -1,3 +1,4 @@
+// Package api provides a minimal client for the Fastly historical stats API.
 package api
 
 import (
@@ -13,13 +14,13 @@ import (
 
 const defaultBaseURL = "https://api.fastly.com"
 
-// APIError represents a non-2xx response from the Fastly API.
-type APIError struct {
+// Error represents a non-2xx response from the Fastly API.
+type Error struct {
 	Code int
 	Msg  string
 }
 
-func (e *APIError) Error() string {
+func (e *Error) Error() string {
 	if e.Msg != "" {
 		return fmt.Sprintf("fastly API responded with %d: %s", e.Code, e.Msg)
 	}
@@ -93,7 +94,7 @@ func (c *Client) ListServices(ctx context.Context) ([]Service, error) {
 				Msg string `json:"msg"`
 			}
 			json.Unmarshal(body, &apiErr)
-			return nil, &APIError{Code: resp.StatusCode, Msg: apiErr.Msg}
+			return nil, &Error{Code: resp.StatusCode, Msg: apiErr.Msg}
 		}
 
 		var batch []Service
@@ -257,7 +258,7 @@ func (c *Client) GetStats(ctx context.Context, serviceID string, from, to time.T
 			Msg string `json:"msg"`
 		}
 		json.Unmarshal(body, &apiErr)
-		return nil, &APIError{Code: resp.StatusCode, Msg: apiErr.Msg}
+		return nil, &Error{Code: resp.StatusCode, Msg: apiErr.Msg}
 	}
 
 	var sr statsResponse
