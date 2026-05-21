@@ -294,3 +294,4 @@ make docker-build  # build Docker image
 ## License
 
 Apache 2.0. See [LICENSE](LICENSE).
+# fastly-historical-stats-exporter
