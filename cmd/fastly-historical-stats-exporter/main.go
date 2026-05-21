@@ -29,6 +29,26 @@ type stringSlice []string
 func (s *stringSlice) String() string     { return strings.Join(*s, ",") }
 func (s *stringSlice) Set(v string) error { *s = append(*s, v); return nil }
 
+func healthzHandler(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	fmt.Fprintln(w, "ok")
+}
+
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	fmt.Fprintf(w, `<html><head><title>Fastly Historical Stats Exporter</title></head>
+<body>
+<h1>Fastly Historical Stats Exporter</h1>
+<p>Version: %s</p>
+<p><a href="/metrics">Metrics</a></p>
+<p><a href="/healthz">Health</a></p>
+</body></html>`, programVersion)
+}
+
 func main() {
 	var (
 		serviceIDs      stringSlice
@@ -110,24 +130,8 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
-	mux.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
-		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		fmt.Fprintln(w, "ok")
-	})
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
-			http.NotFound(w, r)
-			return
-		}
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		fmt.Fprintf(w, `<html><head><title>Fastly Historical Stats Exporter</title></head>
-<body>
-<h1>Fastly Historical Stats Exporter</h1>
-<p>Version: %s</p>
-<p><a href="/metrics">Metrics</a></p>
-<p><a href="/healthz">Health</a></p>
-</body></html>`, programVersion)
-	})
+	mux.HandleFunc("/healthz", healthzHandler)
+	mux.HandleFunc("/", rootHandler)
 
 	srv := &http.Server{
 		Addr:         listenAddr,

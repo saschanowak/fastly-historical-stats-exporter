@@ -55,7 +55,7 @@ lint: ${STATICCHECK} ${REVIVE} ${GOFUMPT} ${SOURCE}
 
 .PHONY: test
 test: ${SOURCE}
-	${GO} test -race ./...
+	${GO} test -race -coverprofile=coverage.out -covermode=atomic ./...
 
 .PHONY: dist
 dist: ${DIST_ZIP}

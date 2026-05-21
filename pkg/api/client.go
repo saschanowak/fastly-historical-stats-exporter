@@ -33,13 +33,26 @@ type Client struct {
 	baseURL    string
 }
 
+// ClientOption configures a Client.
+type ClientOption func(*Client)
+
+// WithBaseURL overrides the default Fastly API base URL.
+// Primarily useful in tests and when targeting non-standard environments.
+func WithBaseURL(u string) ClientOption {
+	return func(c *Client) { c.baseURL = u }
+}
+
 // NewClient returns a Client with a 30s timeout.
-func NewClient(token string) *Client {
-	return &Client{
+func NewClient(token string, opts ...ClientOption) *Client {
+	c := &Client{
 		token:      token,
 		httpClient: &http.Client{Timeout: 30 * time.Second},
 		baseURL:    defaultBaseURL,
 	}
+	for _, o := range opts {
+		o(c)
+	}
+	return c
 }
 
 // Service represents a Fastly CDN service.

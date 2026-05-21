@@ -16,9 +16,20 @@ jobs:
         uses: actions/setup-go@v6
         with:
           go-version: 1.x
-      - run: make lint
+      - name: Lint
+        run: make lint
+
+      - name: Test
+        run: make test
+
+      - name: Write coverage summary
         if: ${{ matrix.platform == 'ubuntu-latest' }}
-      - run: make test
+        run: |
+          go tool cover -func=coverage.out
+          echo "## Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          go tool cover -func=coverage.out >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
   release:
     runs-on: ubuntu-latest

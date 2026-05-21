@@ -162,22 +162,29 @@ func (c *Collector) buildDescs() map[string]*prometheus.Desc {
 }
 
 func (c *Collector) initSelfMetrics() {
-	prefix := prometheus.BuildFQName(c.namespace, "historical_exporter", "")
 	c.scrapeDuration = prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: prefix + "scrape_duration_seconds",
-		Help: "Duration in seconds of the last Fastly stats fetch cycle.",
+		Namespace: c.namespace,
+		Subsystem: "historical_exporter",
+		Name:      "scrape_duration_seconds",
+		Help:      "Duration in seconds of the last Fastly stats fetch cycle.",
 	})
 	c.scrapeErrors = prometheus.NewCounter(prometheus.CounterOpts{
-		Name: prefix + "scrape_errors_total",
-		Help: "Total number of errors fetching stats from the Fastly API.",
+		Namespace: c.namespace,
+		Subsystem: "historical_exporter",
+		Name:      "scrape_errors_total",
+		Help:      "Total number of errors fetching stats from the Fastly API.",
 	})
 	c.servicesCount = prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: prefix + "services_discovered",
-		Help: "Number of Fastly services currently tracked by the exporter.",
+		Namespace: c.namespace,
+		Subsystem: "historical_exporter",
+		Name:      "services_discovered",
+		Help:      "Number of Fastly services currently tracked by the exporter.",
 	})
 	c.lastScrapeTime = prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: prefix + "last_scrape_timestamp_seconds",
-		Help: "Unix timestamp of the last successful Fastly stats fetch.",
+		Namespace: c.namespace,
+		Subsystem: "historical_exporter",
+		Name:      "last_scrape_timestamp_seconds",
+		Help:      "Unix timestamp of the last successful Fastly stats fetch.",
 	})
 }
 
