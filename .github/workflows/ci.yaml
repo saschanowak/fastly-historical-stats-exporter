@@ -6,7 +6,7 @@ jobs:
   test:
     strategy:
       matrix:
-        platform: [ubuntu-latest, macos-latest, windows-latest]
+        platform: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Check out repository
@@ -23,7 +23,6 @@ jobs:
         run: make test
 
       - name: Write coverage summary
-        if: ${{ matrix.platform == 'ubuntu-latest' }}
         run: |
           go tool cover -func=coverage.out
           echo "## Coverage Report" >> $GITHUB_STEP_SUMMARY
@@ -54,7 +53,6 @@ jobs:
       matrix:
         target:
           - { name: linux-amd64,  runner: ubuntu-latest, goos: linux,   goarch: amd64 }
-          - { name: windows-amd64,runner: windows-latest,goos: windows, goarch: amd64 }
           - { name: linux-arm64,  runner: ubuntu-latest, goos: linux,   goarch: arm64 }
     runs-on: ${{ matrix.target.runner }}
     needs: release
