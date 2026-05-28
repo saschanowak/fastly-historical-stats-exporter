@@ -203,35 +203,65 @@ fastly_historical_exporter_last_scrape_timestamp_seconds  # last successful scra
 
 The following fields from the Fastly Historical Stats API are exported. See the [Fastly API documentation](https://www.fastly.com/documentation/reference/api/metrics-stats/historical-stats/) for descriptions of each field.
 
-**Traffic:** `requests`, `hits`, `miss`, `pass`, `errors`, `synth`, `hit_ratio`, `edge_requests`, `origin_offload`
+**Traffic:** `requests`, `hits`, `miss`, `pass`, `errors`, `synth`, `hit_ratio`, `edge_requests`, `origin_offload`, `pipe`, `restarts`, `uncacheable`, `upgrade`, `request_collapse_usable_count`, `request_collapse_unusable_count`, `request_denied_get_head_body`
 
-**Bandwidth:** `bandwidth`, `resp_body_bytes`, `resp_header_bytes`, `bereq_body_bytes`, `bereq_header_bytes`, `edge_resp_body_bytes`, `edge_resp_header_bytes`
+**Bandwidth:** `bandwidth`, `resp_body_bytes`, `resp_header_bytes`, `bereq_body_bytes`, `bereq_header_bytes`, `edge_resp_body_bytes`, `edge_resp_header_bytes`, `req_body_bytes`, `req_header_bytes`, `body_size`, `header_size`
 
-**Status codes:** `status_1xx`, `status_2xx`, `status_3xx`, `status_4xx`, `status_5xx`, `status_200`, `status_301`, `status_302`, `status_304`, `status_400`, `status_401`, `status_403`, `status_404`, `status_410`, `status_416`, `status_422`, `status_503`
+**Response bytes by type:** `hit_resp_body_bytes`, `miss_resp_body_bytes`, `pass_resp_body_bytes`
 
-**Timing:** `hits_time`, `miss_time`
+**Timing:** `hits_time`, `miss_time`, `pass_time`
 
-**TLS/Protocol:** `tls`, `tls_v10`, `tls_v11`, `tls_v12`, `tls_v13`, `http2`, `http3`, `ipv6`
+**Status codes:** `status_1xx`, `status_2xx`, `status_3xx`, `status_4xx`, `status_5xx`, `status_200`, `status_204`, `status_206`, `status_301`, `status_302`, `status_304`, `status_400`, `status_401`, `status_403`, `status_404`, `status_406`, `status_410`, `status_416`, `status_422`, `status_429`, `status_500`, `status_501`, `status_502`, `status_503`, `status_504`, `status_505`, `status_530`
 
-**Image Optimizer:** `imgopto`, `imgopto_transforms`, `imgopto_resp_body_bytes`, `imgopto_resp_header_bytes`
+**TLS/Protocol:** `tls`, `tls_v10`, `tls_v11`, `tls_v12`, `tls_v13`, `tls_handshake_sent_bytes`, `http2`, `http3`, `ipv6`
 
-**Compute:** `compute_requests`, `compute_execution_time_ms`, `compute_ram_used`
+**Image Optimizer:** `imgopto`, `imgopto_transforms`, `imgopto_resp_body_bytes`, `imgopto_resp_header_bytes`, `imgopto_shield`, `imgopto_shield_resp_body_bytes`, `imgopto_shield_resp_header_bytes`, `imgopto_compute_requests`, `imgopto_avif_count`, `imgopto_gif_count`, `imgopto_jpeg_count`, `imgopto_jpegxl_count`, `imgopto_mp4_count`, `imgopto_png_count`, `imgopto_svg_count`, `imgopto_webp_count`
 
-**WAF:** `waf_blocked`, `waf_logged`, `waf_passed`
+**Image Video:** `imgvideo`, `imgvideo_frames`, `imgvideo_resp_body_bytes`, `imgvideo_resp_header_bytes`, `imgvideo_shield`, `imgvideo_shield_frames`, `imgvideo_shield_resp_body_bytes`, `imgvideo_shield_resp_header_bytes`
 
-**DDoS:** `ddos_action_blackhole`, `ddos_action_close`, `ddos_action_tarpit`
+**Compute:** `compute_requests`, `compute_execution_time_ms`, `compute_ram_used`, `compute_request_time_ms`, `compute_request_time_billed_ms`, `compute_bereqs`, `compute_bereq_body_bytes`, `compute_bereq_header_bytes`, `compute_bereq_errors`, `compute_beresp_body_bytes`, `compute_beresp_header_bytes`, `compute_req_body_bytes`, `compute_req_header_bytes`, `compute_resp_body_bytes`, `compute_resp_header_bytes`, `compute_resp_status_103`, `compute_resp_status_1xx`, `compute_resp_status_200`, `compute_resp_status_204`, `compute_resp_status_206`, `compute_resp_status_2xx`, `compute_resp_status_301`, `compute_resp_status_302`, `compute_resp_status_304`, `compute_resp_status_3xx`, `compute_resp_status_400`, `compute_resp_status_401`, `compute_resp_status_403`, `compute_resp_status_404`, `compute_resp_status_416`, `compute_resp_status_429`, `compute_resp_status_4xx`, `compute_resp_status_500`, `compute_resp_status_501`, `compute_resp_status_502`, `compute_resp_status_503`, `compute_resp_status_504`, `compute_resp_status_505`, `compute_resp_status_530`, `compute_resp_status_5xx`, `compute_cache_operations_count`, `compute_sandboxes`, `compute_handoff`, `compute_guest_errors`, `compute_runtime_errors`, `compute_globals_limit_exceeded`, `compute_heap_limit_exceeded`, `compute_stack_limit_exceeded`, `compute_resource_limit_exceeded`, `compute_platform_internal_error`, `compute_platform_invalid_request_error`, `compute_service_bereq_error`, `compute_service_chain_error`, `compute_service_limits_error`, `compute_service_memory_exceeded_error`, `compute_service_resource_limits_error`, `compute_service_runtime_error`, `compute_service_timeout_error`, `compute_service_vcpu_exceeded_error`
 
-**Shield:** `shield`, `shield_resp_body_bytes`, `shield_resp_header_bytes`
+**Next-Gen WAF (NGWAF):** `ngwaf_requests_total_count`, `ngwaf_requests_allowed_count`, `ngwaf_requests_blocked_count`, `ngwaf_requests_challenged_count`, `ngwaf_requests_logged_count`, `ngwaf_requests_timeout_count`, `ngwaf_requests_unknown_count`, `ngwaf_bot_analysis_request_count`
 
-**Bot management:** `bot_challenges_issued`, `bot_challenges_succeeded`, `bot_challenges_failed`
+**WAF (legacy):** `waf_blocked`, `waf_logged`, `waf_passed`
 
-**Video:** `otfp`, `otfp_deliver_time`, `otfp_resp_body_bytes`, `otfp_resp_header_bytes`, `otfp_manifest_resp_body_bytes`, `otfp_manifest_resp_header_bytes`, `video`, `pci`
+**DDoS:** `ddos_action_blackhole`, `ddos_action_close`, `ddos_action_tarpit`, `ddos_action_tarpit_accept`, `ddos_action_downgrade`, `ddos_action_downgraded_connections`, `ddos_action_limit_streams_connections`, `ddos_action_limit_streams_requests`, `ddos_protection_requests_allow_count`, `ddos_protection_requests_detect_count`, `ddos_protection_requests_mitigate_count`
 
-**Attack:** `attack_req_body_bytes`, `attack_req_header_bytes`, `attack_resp_synth_bytes`
+**Shield:** `shield`, `shield_resp_body_bytes`, `shield_resp_header_bytes`, `shield_fetches`, `shield_fetch_body_bytes`, `shield_fetch_header_bytes`, `shield_fetch_resp_body_bytes`, `shield_fetch_resp_header_bytes`, `shield_cache_fetches`, `shield_hit_requests`, `shield_hit_resp_body_bytes`, `shield_hit_resp_header_bytes`, `shield_miss_requests`, `shield_miss_resp_body_bytes`, `shield_miss_resp_header_bytes`, `shield_revalidations`
+
+**Bot management:** `bot_challenges_issued`, `bot_challenges_succeeded`, `bot_challenges_failed`, `bot_challenge_starts`, `bot_challenge_complete_tokens_checked`, `bot_challenge_complete_tokens_disabled`, `bot_challenge_complete_tokens_failed`, `bot_challenge_complete_tokens_issued`, `bot_challenge_complete_tokens_passed`, `bot_requests_total_count`, `bot_edge_requests_analyzed_count`, `bot_edge_requests_detected_count`, `bot_edge_requests_verified_count`, `bot_edge_requests_accessibility_count`, `bot_edge_requests_ai_crawler_count`, `bot_edge_requests_ai_fetcher_count`, `bot_edge_requests_content_fetcher_count`, `bot_edge_requests_monitoring_count`, `bot_edge_requests_online_marketing_count`, `bot_edge_requests_page_preview_count`, `bot_edge_requests_platform_integrations_count`, `bot_edge_requests_research_count`, `bot_edge_requests_search_engine_crawler_count`, `bot_edge_requests_search_engine_optimization_count`, `bot_edge_requests_security_tools_count`
+
+**Video:** `otfp`, `otfp_deliver_time`, `otfp_resp_body_bytes`, `otfp_resp_header_bytes`, `otfp_manifest_resp_body_bytes`, `otfp_manifest_resp_header_bytes`, `otfp_manifests`, `otfp_shield_resp_body_bytes`, `otfp_shield_resp_header_bytes`, `otfp_shield_time`, `video`, `pci`
+
+**Attack:** `attack_req_body_bytes`, `attack_req_header_bytes`, `attack_resp_synth_bytes`, `attack_blocked_req_body_bytes`, `attack_blocked_req_header_bytes`, `attack_logged_req_body_bytes`, `attack_logged_req_header_bytes`, `attack_passed_req_body_bytes`, `attack_passed_req_header_bytes`
 
 **Logging:** `log`, `log_bytes`
 
 **VCL subroutines:** `recv_sub_time`, `recv_sub_count`, `hash_sub_time`, `hash_sub_count`, `miss_sub_time`, `miss_sub_count`, `fetch_sub_time`, `fetch_sub_count`, `pass_sub_time`, `pass_sub_count`, `pipe_sub_time`, `pipe_sub_count`, `deliver_sub_time`, `deliver_sub_count`, `error_sub_time`, `error_sub_count`, `hit_sub_time`, `hit_sub_count`, `prehash_sub_time`, `prehash_sub_count`, `predeliver_sub_time`, `predeliver_sub_count`
+
+**Edge breakdown:** `edge_hit_requests`, `edge_hit_resp_body_bytes`, `edge_hit_resp_header_bytes`, `edge_miss_requests`, `edge_miss_resp_body_bytes`, `edge_miss_resp_header_bytes`
+
+**All-sources aggregates:** `all_hit_requests`, `all_miss_requests`, `all_pass_requests`, `all_error_requests`, `all_synth_requests`, `all_edge_hit_requests`, `all_edge_miss_requests`, `all_status_1xx`, `all_status_2xx`, `all_status_3xx`, `all_status_4xx`, `all_status_5xx`
+
+**Origin:** `origin_fetches`, `origin_fetch_body_bytes`, `origin_fetch_header_bytes`, `origin_fetch_resp_body_bytes`, `origin_fetch_resp_header_bytes`, `origin_cache_fetches`, `origin_cache_fetch_resp_body_bytes`, `origin_cache_fetch_resp_header_bytes`, `origin_revalidations`
+
+**WebSocket:** `websocket_req_body_bytes`, `websocket_req_header_bytes`, `websocket_resp_body_bytes`, `websocket_resp_header_bytes`, `websocket_bereq_body_bytes`, `websocket_bereq_header_bytes`, `websocket_beresp_body_bytes`, `websocket_beresp_header_bytes`, `websocket_conn_time_ms`
+
+**Fanout:** `fanout_req_body_bytes`, `fanout_req_header_bytes`, `fanout_resp_body_bytes`, `fanout_resp_header_bytes`, `fanout_bereq_body_bytes`, `fanout_bereq_header_bytes`, `fanout_beresp_body_bytes`, `fanout_beresp_header_bytes`, `fanout_conn_time_ms`, `fanout_recv_publishes`, `fanout_send_publishes`
+
+**KV Store:** `kv_store_class_a_operations`, `kv_store_class_b_operations`
+
+**Object Storage:** `object_store_class_a_operations`, `object_store_class_b_operations`, `object_storage_class_a_operations_count`, `object_storage_class_b_operations_count`
+
+**Object size buckets:** `object_size_1k`, `object_size_10k`, `object_size_100k`, `object_size_1m`, `object_size_10m`, `object_size_100m`, `object_size_1g`
+
+**Segblock:** `segblock_origin_fetches`, `segblock_shield_fetches`
+
+**DNS:** `dns_billable_responses_count`, `dns_nonbillable_responses_count`
+
+**API Discovery:** `api_discovery_requests_count`
+
+**AI Accelerator:** `aia_requests`, `aia_estimated_time_saved_ms`, `aia_origin_usage_tokens`, `aia_response_usage_tokens`, `aia_status_1xx`, `aia_status_2xx`, `aia_status_3xx`, `aia_status_4xx`, `aia_status_5xx`
 
 ---
 
