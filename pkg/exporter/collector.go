@@ -269,7 +269,7 @@ func (c *Collector) scrapeAll(ctx context.Context) error {
 
 	start := time.Now()
 	now := time.Now()
-	from := now.Add(-120 * time.Second)
+	from := now.Add(-660 * time.Second)
 	to := now.Add(-60 * time.Second)
 
 	type result struct {

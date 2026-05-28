@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"sync"
 	"testing"
 	"time"
 
@@ -41,28 +42,52 @@ func newFastlyServer(services []api.Service, statsData []map[string]any) *httpte
 }
 
 // collectAll drains the Collector into a slice of Metrics.
+// Uses a goroutine to avoid deadlocking when the field count exceeds a fixed buffer.
 func collectAll(t *testing.T, c *exporter.Collector) []prometheus.Metric {
 	t.Helper()
-	ch := make(chan prometheus.Metric, 256)
+	ch := make(chan prometheus.Metric)
+	var (
+		out []prometheus.Metric
+		mu  sync.Mutex
+		wg  sync.WaitGroup
+	)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for m := range ch {
+			mu.Lock()
+			out = append(out, m)
+			mu.Unlock()
+		}
+	}()
 	c.Collect(ch)
 	close(ch)
-	var out []prometheus.Metric
-	for m := range ch {
-		out = append(out, m)
-	}
+	wg.Wait()
 	return out
 }
 
 // describeAll drains Describe into a slice of Descs.
+// Uses a goroutine to avoid deadlocking when the field count exceeds a fixed buffer.
 func describeAll(t *testing.T, c *exporter.Collector) []*prometheus.Desc {
 	t.Helper()
-	ch := make(chan *prometheus.Desc, 512)
+	ch := make(chan *prometheus.Desc)
+	var (
+		out []*prometheus.Desc
+		mu  sync.Mutex
+		wg  sync.WaitGroup
+	)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for d := range ch {
+			mu.Lock()
+			out = append(out, d)
+			mu.Unlock()
+		}
+	}()
 	c.Describe(ch)
 	close(ch)
-	var out []*prometheus.Desc
-	for d := range ch {
-		out = append(out, d)
-	}
+	wg.Wait()
 	return out
 }
 
